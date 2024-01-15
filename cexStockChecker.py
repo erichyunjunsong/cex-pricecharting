@@ -164,7 +164,6 @@ async def set_sold(currentDate):
     conn.close()
 
 
-
 async def main():
     currentDate = datetime.date.today()
     newListings = []
@@ -185,7 +184,7 @@ async def main():
             else:
                 #check if out of stock first 
                 if await check_stock(title) == False:
-                    newListings.append({title,price})
+                    newListings.append([title,price])
                 await set_in_stock(title, currentDate)
                
         pageNum += 1
@@ -196,6 +195,7 @@ async def main():
     print(newListings)
     print("SOLD Listings")
     print(soldListings)
+    return [newListings, soldListings]
 
 if __name__ == "__main__":
     asyncio.run(main())
