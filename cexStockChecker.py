@@ -80,6 +80,30 @@ async def save_listing(title, price, currentDate):
     conn.commit()
     conn.close()
 
+async def save_price(title, price, currentDate):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('listings.db')
+
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Create a table if it doesn't exist
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            price NUMBER,
+            dateChecked DATE
+        )
+    ''')
+
+    # Insert the new listing into the table
+    cursor.execute('INSERT INTO prices (title, price, dateChecked) VALUES (?, ?, ?)', (title, price, currentDate))
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
 async def is_new_listing(title):
     #catch instance where the database doesn't exist
     try: 
@@ -132,6 +156,25 @@ async def check_stock(title):
 
     return inStock
 
+async def check_price_different(title, price):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('listings.db')
+
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+
+    currentSavedPrice = cursor.execute('SELECT price from listings WHERE title = ?', (title,))
+
+    # Close the connection
+    conn.close()
+    
+    # Check if price has changed
+    if (currentSavedPrice != price):
+        return False
+    else:
+        return True
+
 async def get_sold(currentDate):
     # Connect to the SQLite database
     conn = sqlite3.connect('listings.db')
@@ -163,13 +206,11 @@ async def set_sold(currentDate):
     conn.commit()
     conn.close()
 
-
-
 async def main():
-    currentDate = datetime.date.today()
+    currentDate = datetime.datetime.now()
     newListings = []
+    priceChangedListings = []
     pageNum = 1
-    #await set_out_of_stock()
     while(True):
         listings = getListingsOnPage(pageNum)
         if (listings == []):
@@ -181,13 +222,17 @@ async def main():
             print(price)
             if await is_new_listing(title):
                 await save_listing(title, price, currentDate)
+                await save_price(title, price, currentDate)
                 newListings.append({title,price})
             else:
                 #check if out of stock first 
                 if await check_stock(title) == False:
                     newListings.append({title,price})
                 await set_in_stock(title, currentDate)
-               
+                if await check_price_different(title,price):
+                    await save_price(title, price, currentDate)
+                    priceChangedListings.append(title,price)
+
         pageNum += 1
     
     soldListings = await get_sold(currentDate)
@@ -196,9 +241,8 @@ async def main():
     print(newListings)
     print("SOLD Listings")
     print(soldListings)
+    print("Price change")
+    print(priceChangedListings)
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-#TODO: create another table for prices 
