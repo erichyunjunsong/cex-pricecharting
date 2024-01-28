@@ -31,23 +31,36 @@ async def checkStockChanges(ctx):
     newListings = listings[0]
     soldListings = listings[1]
 
-    for newIndex in range (0, len(newListings)):
+    if len(newListings) == 0: 
         embed = discord.Embed(
-            title = newListings[newIndex],
-            color = discord.Color.red()
+            title = "No new listings",
+            color = discord.Color.orange()
         )
-        embed.add_field(name="Price", value = newListings[newIndex])
         await channel.send(embed=embed)
-    
-    for soldIndex in range (0, len(soldListings)):
-        embed = discord.Embed(
-            title = soldListings[soldIndex],
-            color = discord.Color.red()
-        )
-        embed.add_field(name="Price", value = soldListings[soldIndex])
-        await channel.send(embed=embed)
+    else:
+        for newIndex in range (0, len(newListings)):
+            embed = discord.Embed(
+                title = newListings[newIndex],
+                color = discord.Color.red()
+            )
+            embed.add_field(name="Price", value = newListings[newIndex])
+            await channel.send(embed=embed)
 
-
+    if len(soldListings) == 0: 
+            embed = discord.Embed(
+                title = "No sold listings",
+                color = discord.Color.orange()
+            )
+            await channel.send(embed=embed)
+    else:
+         for soldIndex in range (0, len(soldListings)):
+            embed = discord.Embed(
+                title = soldListings[soldIndex],
+                color = discord.Color.red()
+            )
+            embed.add_field(name="Price", value = soldListings[soldIndex])
+            await channel.send(embed=embed)
+            
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
