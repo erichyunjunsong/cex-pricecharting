@@ -12,6 +12,7 @@ import datetime
 
 def setupDriver():
     options = Options()
+    options.add_argument("start-maximized")
     options.add_argument('--ignore-certificate-errors')
     options.add_argument("--enable-automation")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
