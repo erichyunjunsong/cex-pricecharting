@@ -14,6 +14,7 @@ def setupDriver():
     options = Options()
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('headless')
+    options.add_argument("--disable-gpu")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return driver
