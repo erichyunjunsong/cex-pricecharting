@@ -13,9 +13,11 @@ import datetime
 def setupDriver():
     options = Options()
     options.add_argument('--ignore-certificate-errors')
-    options.add_argument('headless')
-    options.add_argument("--disable-gpu")
+    options.add_argument("--enable-automation")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    options.headless = True
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return driver
 
