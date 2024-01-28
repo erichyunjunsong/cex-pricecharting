@@ -33,18 +33,18 @@ async def checkStockChanges(ctx):
 
     for newIndex in range (0, len(newListings)):
         embed = discord.Embed(
-            title = newListings[newIndex][0],
+            title = newListings[newIndex],
             color = discord.Color.red()
         )
-        embed.add_field(name="Price", value = newListings[newIndex][1])
+        embed.add_field(name="Price", value = newListings[newIndex])
         await channel.send(embed=embed)
     
     for soldIndex in range (0, len(soldListings)):
         embed = discord.Embed(
-            title = soldListings[soldIndex][0],
+            title = soldListings[soldIndex],
             color = discord.Color.red()
         )
-        embed.add_field(name="Price", value = soldListings[newIndex][1])
+        embed.add_field(name="Price", value = soldListings[soldIndex])
         await channel.send(embed=embed)
 
 
